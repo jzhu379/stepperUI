@@ -28,7 +28,11 @@ class AdminStepper extends Component
   handleBack = () => {this.setState({activeStep: this.state.activeStep - 1});}
   handleChangeForm1 = (id, value) => {this.setState({[id]: value});}
   handleChangeFormGen = (id, value) => {this.setState({[id]: value});}
-  handleSubmit = () => {console.log(this.state)} //send to the backend
+  handleSubmit = () => //send to the backend
+  {
+    console.log("data sent:");
+    console.log(this.state)
+  }
 
   handleChangeForm2 = (id, day, value) =>
   {
