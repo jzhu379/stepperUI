@@ -44,9 +44,7 @@ class InputForm2 extends Component
       errorArrayMax[day] = false;
       errorArrayCompare[day] = false;
 
-      this.setState({minError: errorArrayMin});
-      this.setState({maxError: errorArrayMax});
-      this.setState({compareError: errorArrayCompare});
+      this.setState({minError: errorArrayMin, maxError: errorArrayMax, compareError: errorArrayCompare});
     }
     else
     {
@@ -68,9 +66,7 @@ class InputForm2 extends Component
   resetErrorAll = () => 
   {
     const errorArray = Array(7).fill(false);
-    this.setState({minError: errorArray});
-    this.setState({maxError: errorArray});
-    this.setState({compareError: errorArray});
+    this.setState({minError: errorArray, maxError: errorArray, compareError: errorArray});
   }
 
   checkData = () =>
@@ -128,8 +124,7 @@ class InputForm2 extends Component
     }
     else
     {
-      this.setState({minError: errorArrayMin});
-      this.setState({maxError: errorArrayMax});
+      this.setState({minError: errorArrayMin, maxError: errorArrayMax});
     }
   }
 
@@ -248,7 +243,12 @@ class InputForm2 extends Component
           <Button
             variant = 'contained'
             color = 'primary'
-            onClick = {() => {this.resetErrorAll(); this.props.applyAll();}}
+            onClick = {(e) =>
+            {
+              e.preventDefault();
+              this.resetErrorAll();
+              this.props.applyAll();
+            }}
             className = {classes.button}
           >
             Apply To All
