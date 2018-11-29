@@ -24,6 +24,7 @@ class AdminStepper extends Component
     imgFile: null
   }
 
+<<<<<<< HEAD
   handleNext = () =>
   {
     this.setState({activeStep: this.state.activeStep + 1});
@@ -47,6 +48,16 @@ class AdminStepper extends Component
   handleSubmit = () =>
   {
     console.log(this.state) //send to the backend
+=======
+  handleNext = () => {this.setState({activeStep: this.state.activeStep + 1});}
+  handleBack = () => {this.setState({activeStep: this.state.activeStep - 1});}
+  handleChangeForm1 = (id, value) => {this.setState({[id]: value});}
+  handleChangeFormGen = (id, value) => {this.setState({[id]: value});}
+  handleSubmit = () => //send to the backend
+  {
+    console.log("data sent:");
+    console.log(this.state)
+>>>>>>> 7858636c87694461b979ea72b512afe616fb082c
   }
 
   handleChangeForm2 = (id, day, value) =>
