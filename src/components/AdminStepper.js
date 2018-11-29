@@ -24,11 +24,30 @@ class AdminStepper extends Component
     imgFile: null
   }
 
-  handleNext = () => {this.setState({activeStep: this.state.activeStep + 1});}
-  handleBack = () => {this.setState({activeStep: this.state.activeStep - 1});}
-  handleChangeForm1 = (id, value) => {this.setState({[id]: value});}
-  handleChangeFormGen = (id, value) => {this.setState({[id]: value});}
-  handleSubmit = () => {console.log(this.state)} //send to the backend
+  handleNext = () =>
+  {
+    this.setState({activeStep: this.state.activeStep + 1});
+  }
+
+  handleBack = () =>
+  {
+    this.setState({activeStep: this.state.activeStep - 1});
+  }
+
+  handleChangeForm1 = (id, value) =>
+  {
+    this.setState({[id]: value});
+  }
+
+  handleChangeFormGen = (id, value) =>
+  {
+    this.setState({[id]: value});
+  }
+  
+  handleSubmit = () =>
+  {
+    console.log(this.state) //send to the backend
+  }
 
   handleChangeForm2 = (id, day, value) =>
   {
@@ -55,8 +74,6 @@ class AdminStepper extends Component
 
   render()
   {
-    console.log(this.props);
-
     const {classes} = this.props;
 
     const form = (activeStep) =>
@@ -64,6 +81,7 @@ class AdminStepper extends Component
       switch (activeStep)
       {
         case 0:
+        {
           return (
             <InputForm1
               clickedNext = {this.handleNext}
@@ -71,7 +89,9 @@ class AdminStepper extends Component
               change = {this.handleChangeForm1}
             />
           );
+        }
         case 1:
+        {
           return (
             <InputForm2
               clickedNext = {this.handleNext}
@@ -82,7 +102,9 @@ class AdminStepper extends Component
               applyAll = {this.handleApplyAll}
             />
           );
+        }
         case 2:
+        {
           return (
             <InputForm3
               clickedNext = {this.handleNext}
@@ -91,7 +113,9 @@ class AdminStepper extends Component
               fileUpload = {(file) => {this.setState({imgFile: file});}}
             />
           );
+        }
         default:
+        {
           return (
             <div>
                 <Typography className = {classes.confirmation}>
@@ -113,23 +137,22 @@ class AdminStepper extends Component
                 </div>
             </div>
           );
+        }
       }
     }
 
     return (
       <div className = {classes.root}>
         <Stepper activeStep = {this.state.activeStep} className = {classes.stepper}>
-          {STEP_TITLES.map((label) =>
           {
-            const props = {};
-            const labelProps = {};
-
-            return (
-              <Step key = {label} {...props}>
-                <StepLabel {...labelProps}> {label} </StepLabel>
-              </Step>
-            );
-          })
+            STEP_TITLES.map((label) =>
+            {
+              return (
+                <Step key = {label}>
+                  <StepLabel> {label} </StepLabel>
+                </Step>
+              );
+            })
           }
         </Stepper>
         <div className = {classes.divider}/>
