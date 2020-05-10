@@ -1,81 +1,77 @@
-import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-const moment = require('moment');
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+const moment = require("moment");
 
-class InputForm2 extends Component
-{
-  state =
-  {
+class InputForm2 extends Component {
+  state = {
     minError: Array(7).fill(false),
     maxError: Array(7).fill(false),
     compareError: Array(7).fill(false),
-    minGen: '',
-    maxGen: ''
-  }
+    minGen: "",
+    maxGen: "",
+  };
 
-  getState = (id, day) =>
-  {
-    if (this.props.stateObj.days[day] === null)
-    {
-      return '';
-    }
-    else
-    {
+  getState = (id, day) => {
+    if (this.props.stateObj.days[day] === null) {
+      return "";
+    } else {
       return this.props.stateObj.days[day][id];
     }
-  }
+  };
 
   handleChange = this.props.change;
   handleChangeGen = this.props.changeGen;
 
-  resetError = (id, day) =>
-  {
-    if (id === 'allError')
-    {
+  resetError = (id, day) => {
+    if (id === "allError") {
       const errorArrayMin = JSON.parse(JSON.stringify(this.state.minError));
       const errorArrayMax = JSON.parse(JSON.stringify(this.state.maxError));
-      const errorArrayCompare = JSON.parse(JSON.stringify(this.state.compareError));
+      const errorArrayCompare = JSON.parse(
+        JSON.stringify(this.state.compareError)
+      );
       errorArrayMin[day] = false;
       errorArrayMax[day] = false;
       errorArrayCompare[day] = false;
 
-      this.setState({minError: errorArrayMin, maxError: errorArrayMax, compareError: errorArrayCompare});
-    }
-    else
-    {
+      this.setState({
+        minError: errorArrayMin,
+        maxError: errorArrayMax,
+        compareError: errorArrayCompare,
+      });
+    } else {
       const errorArray = JSON.parse(JSON.stringify(this.state[id]));
-      const errorArrayCompare = JSON.parse(JSON.stringify(this.state.compareError));
-      if(errorArrayCompare[day] === true)
-      {
+      const errorArrayCompare = JSON.parse(
+        JSON.stringify(this.state.compareError)
+      );
+      if (errorArrayCompare[day] === true) {
         errorArrayCompare[day] = false;
-        this.setState({compareError: errorArrayCompare});
+        this.setState({ compareError: errorArrayCompare });
       }
-      if(errorArray[day] === true)
-      {
+      if (errorArray[day] === true) {
         errorArray[day] = false;
-        this.setState({[id]: errorArray});
+        this.setState({ [id]: errorArray });
       }
     }
-  }
+  };
 
-  resetErrorAll = () => 
-  {
+  resetErrorAll = () => {
     const errorArray = Array(7).fill(false);
-    this.setState({minError: errorArray, maxError: errorArray, compareError: errorArray});
-  }
+    this.setState({
+      minError: errorArray,
+      maxError: errorArray,
+      compareError: errorArray,
+    });
+  };
 
-  checkData = () =>
-  {
+  checkData = () => {
     let validIndex = [];
-    for (let j = 0; j < this.props.stateObj.days.length; j ++)
-    {
-      if (this.props.stateObj.days[j] !== null)
-      {
+    for (let j = 0; j < this.props.stateObj.days.length; j++) {
+      if (this.props.stateObj.days[j] !== null) {
         validIndex.push(j);
       }
     }
@@ -83,197 +79,201 @@ class InputForm2 extends Component
     const errorArrayMin = JSON.parse(JSON.stringify(this.state.minError));
     const errorArrayMax = JSON.parse(JSON.stringify(this.state.maxError));
 
-    for (let i = 0; i < validIndex.length; i ++)
-    {
+    for (let i = 0; i < validIndex.length; i++) {
       const day = this.props.stateObj.days[validIndex[i]];
 
-      if (day.min === '')
-      {
+      if (day.min === "") {
         errorArrayMin[validIndex[i]] = true;
       }
 
-      if (day.max === '')
-      {
+      if (day.max === "") {
         errorArrayMax[validIndex[i]] = true;
       }
     }
 
-    if (arrayAllFalse(errorArrayMin) && arrayAllFalse(errorArrayMax))
-    {
-      const errorArrayCompare = JSON.parse(JSON.stringify(this.state.compareError));
+    if (arrayAllFalse(errorArrayMin) && arrayAllFalse(errorArrayMax)) {
+      const errorArrayCompare = JSON.parse(
+        JSON.stringify(this.state.compareError)
+      );
 
-      for (let k = 0; k < validIndex.length; k ++)
-      {
+      for (let k = 0; k < validIndex.length; k++) {
         const day = this.props.stateObj.days[validIndex[k]];
         const minTime = convertTo24(day.min);
         const maxTime = convertTo24(day.max);
-        if (minTime >= maxTime)
-        {
+        if (minTime >= maxTime) {
           errorArrayCompare[validIndex[k]] = true;
         }
       }
 
-      if (arrayAllFalse(errorArrayCompare))
-      {
+      if (arrayAllFalse(errorArrayCompare)) {
         this.props.clickedNext();
+      } else {
+        this.setState({ compareError: errorArrayCompare });
       }
-      else
-      {
-        this.setState({compareError: errorArrayCompare});
-      }
+    } else {
+      this.setState({ minError: errorArrayMin, maxError: errorArrayMax });
     }
-    else
-    {
-      this.setState({minError: errorArrayMin, maxError: errorArrayMax});
-    }
-  }
+  };
 
-  render()
-  {
-    const {classes} = this.props;
-    const getTimeItems = () =>
-    {
+  render() {
+    const { classes } = this.props;
+    const getTimeItems = () => {
       const array = [];
-      for (let i = 0; i < 24; i ++)
-      {
-        array.push(moment().startOf('day').add(i, 'h').format('h A'));
+      for (let i = 0; i < 24; i++) {
+        array.push(moment().startOf("day").add(i, "h").format("h A"));
       }
-  
-      return array.map((e) =>
-      {
-        return (<MenuItem key = {e} value = {e} className = {classes.menuItem}> {e} </MenuItem>);
+
+      return array.map((e) => {
+        return (
+          <MenuItem key={e} value={e} className={classes.menuItem}>
+            {" "}
+            {e}{" "}
+          </MenuItem>
+        );
       });
-    }
-    
-    const getTimes = () =>
-    {
-      return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) =>
-      {
+    };
+
+    const getTimes = () => {
+      return [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ].map((day) => {
         const dayNum = dayToNum(day);
 
         return (
-          <div key = {day} className = {classes.day}>
-            <h1 className = {classes.DOTW}> {day} </h1>
+          <div key={day} className={classes.day}>
+            <h1 className={classes.DOTW}> {day} </h1>
             <TextField
-              id = {'min' + dayNum}
+              id={"min" + dayNum}
               select
-              disabled = {this.props.stateObj.days[dayNum] === null}
-              error = {this.state.minError[dayNum]}
-              label = 'Opening Time'
-              helperText = {this.state.minError[dayNum] ? 'missing data' : ''}
-              className = {classes.textField}
-              value = {this.getState('min', dayNum)}
-              onChange = {(event) => 
-              {
-                this.resetError('minError', dayNum);
-                this.handleChange('min', dayNum, event.target.value);
+              disabled={this.props.stateObj.days[dayNum] === null}
+              error={this.state.minError[dayNum]}
+              label="Opening Time"
+              helperText={this.state.minError[dayNum] ? "missing data" : ""}
+              className={classes.textField}
+              value={this.getState("min", dayNum)}
+              onChange={(event) => {
+                this.resetError("minError", dayNum);
+                this.handleChange("min", dayNum, event.target.value);
               }}
-              SelectProps = {{MenuProps: {className: classes.menu}}}
+              SelectProps={{ MenuProps: { className: classes.menu } }}
             >
               {getTimeItems()}
             </TextField>
             <TextField
-              id = {'max' + dayNum}
+              id={"max" + dayNum}
               select
-              disabled = {this.props.stateObj.days[dayNum] === null}
-              error = {this.state.maxError[dayNum]}
-              label = 'Closing Time'
-              helperText = {this.state.maxError[dayNum] ? 'missing data' : ''}
-              className = {classes.textField}
-              value = {this.getState('max', dayNum)}
-              onChange = {(event) =>
-              {
-                this.resetError('maxError', dayNum);
-                this.handleChange('max', dayNum, event.target.value);
+              disabled={this.props.stateObj.days[dayNum] === null}
+              error={this.state.maxError[dayNum]}
+              label="Closing Time"
+              helperText={this.state.maxError[dayNum] ? "missing data" : ""}
+              className={classes.textField}
+              value={this.getState("max", dayNum)}
+              onChange={(event) => {
+                this.resetError("maxError", dayNum);
+                this.handleChange("max", dayNum, event.target.value);
               }}
-              SelectProps = {{MenuProps: {className: classes.menu}}}
+              SelectProps={{ MenuProps: { className: classes.menu } }}
             >
               {getTimeItems()}
             </TextField>
-            {this.state.compareError[dayNum] ? <p className = {classes.error}> start time must be before endtime </p> : null}
-            <div className = {classes.divider}/>
+            {this.state.compareError[dayNum] ? (
+              <p className={classes.error}>
+                {" "}
+                start time must be before endtime{" "}
+              </p>
+            ) : null}
+            <div className={classes.divider} />
             <FormControlLabel
-              label = 'disable'
-              control =
-              {
+              label="disable"
+              control={
                 <Checkbox
-                  id = {'checkbox' + dayNum}
-                  checked = {this.props.stateObj.days[dayNum] === null}
-                  onChange = {(event) =>
-                  {
-                    this.resetError('allError', dayNum);
-                    this.handleChange('disable', dayNum, event.target.checked);
+                  id={"checkbox" + dayNum}
+                  checked={this.props.stateObj.days[dayNum] === null}
+                  onChange={(event) => {
+                    this.resetError("allError", dayNum);
+                    this.handleChange("disable", dayNum, event.target.checked);
                   }}
                 />
               }
-            /> 
+            />
           </div>
         );
       });
-    }
+    };
 
-    const getGeneralTime = () =>
-    {
+    const getGeneralTime = () => {
       return (
-        <div key = {'General'} className = {classes.dayGen}>
-          <h1 className = {classes.DOTW}> General Time </h1>
+        <div key={"General"} className={classes.dayGen}>
+          <h1 className={classes.DOTW}> General Time </h1>
           <TextField
-            id = {'minGen'}
+            id={"minGen"}
             select
-            label = 'Opening Time'
-            className = {classes.textField}
-            value = {this.props.stateObj.minGen}
-            onChange = {(event) => {this.handleChangeGen('minGen', event.target.value);}}
-            SelectProps = {{MenuProps: {className: classes.menu}}}
+            label="Opening Time"
+            className={classes.textField}
+            value={this.props.stateObj.minGen}
+            onChange={(event) => {
+              this.handleChangeGen("minGen", event.target.value);
+            }}
+            SelectProps={{ MenuProps: { className: classes.menu } }}
           >
             {getTimeItems()}
           </TextField>
           <TextField
-            id = {'maxGen'}
+            id={"maxGen"}
             select
-            label = 'Closing Time'
-            className = {classes.textField}
-            value = {this.props.stateObj.maxGen}
-            onChange = {(event) => {this.handleChangeGen('maxGen', event.target.value);}}
-            SelectProps = {{MenuProps: {className: classes.menu}}}
+            label="Closing Time"
+            className={classes.textField}
+            value={this.props.stateObj.maxGen}
+            onChange={(event) => {
+              this.handleChangeGen("maxGen", event.target.value);
+            }}
+            SelectProps={{ MenuProps: { className: classes.menu } }}
           >
             {getTimeItems()}
           </TextField>
-          <div className = {classes.divider}/>
+          <div className={classes.divider} />
           <Button
-            variant = 'contained'
-            color = 'primary'
-            onClick = {(e) =>
-            {
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
               e.preventDefault();
               this.resetErrorAll();
               this.props.applyAll();
             }}
-            className = {classes.button}
+            className={classes.button}
           >
             Apply To All
           </Button>
         </div>
       );
-    }
+    };
 
     return (
-      <div className = {classes.container}>
-        <form noValidate autoComplete = 'off'>
+      <div className={classes.container}>
+        <form noValidate autoComplete="off">
           {getGeneralTime()}
           {getTimes()}
           <Button
-            variant = 'contained'
-            color = 'primary'
-            onClick = {this.props.clickedBack}
-            className = {classes.button}
+            variant="contained"
+            color="primary"
+            onClick={this.props.clickedBack}
+            className={classes.button}
           >
             Back
           </Button>
           <Button
-            variant = 'contained'
-            color = 'primary'
-            onClick = {(e) => {e.preventDefault(); this.checkData();}}
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              this.checkData();
+            }}
           >
             Next
           </Button>
@@ -283,115 +283,103 @@ class InputForm2 extends Component
   }
 }
 
-const styles = (theme) =>
-{
-  return (
-    {
-      container:
-      {
-        width: '95%',
-        margin: 'auto',
-        marginBottom: '2rem',
-        padding: '1.5rem',
-        backgroundColor: 'darkgrey',
-        borderRadius: '1.5rem',
-      },
-      textField:
-      {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: '8rem'
-      },
-      menuItem: {height: '0.5rem'},
-      button: {marginRight: '1rem'},
-      day: {margin: '1rem', padding: '1rem', backgroundColor: 'lightgrey', borderRadius: '1rem'},
-      divider: {height: '1rem'},
-      DOTW: {margin: '0', padding: '0.5rem'},
-      dayGen: {margin: '1rem', padding: '1rem', backgroundColor: 'lightgreen', borderRadius: '1rem'},
-      error: {color: 'red', fontSize: '0.8rem', padding: 0, margin: 0, marginTop: '0.4rem'}
-    }
-  );
-}
+const styles = (theme) => {
+  return {
+    container: {
+      width: "95%",
+      margin: "auto",
+      marginBottom: "2rem",
+      padding: "1.5rem",
+      backgroundColor: "darkgrey",
+      borderRadius: "1.5rem",
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: "8rem",
+    },
+    menuItem: { height: "0.5rem" },
+    button: { marginRight: "1rem" },
+    day: {
+      margin: "1rem",
+      padding: "1rem",
+      backgroundColor: "lightgrey",
+      borderRadius: "1rem",
+    },
+    divider: { height: "1rem" },
+    DOTW: { margin: "0", padding: "0.5rem" },
+    dayGen: {
+      margin: "1rem",
+      padding: "1rem",
+      backgroundColor: "lightgreen",
+      borderRadius: "1rem",
+    },
+    error: {
+      color: "red",
+      fontSize: "0.8rem",
+      padding: 0,
+      margin: 0,
+      marginTop: "0.4rem",
+    },
+  };
+};
 
-const arrayAllFalse = (array) =>
-{
-  for (let i = 0; i < array.length; i ++)
-  {
-    if (array[i] === true)
-    {
+const arrayAllFalse = (array) => {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === true) {
       return false;
     }
   }
-  
-  return true;
-}
 
-const convertTo24 = (str) =>
-{
+  return true;
+};
+
+const convertTo24 = (str) => {
   const num = parseInt(str.substring(0, str.length - 3), 10);
   const suffix = str.substring(str.length - 2, str.length);
 
-  if(suffix === 'AM')
-  {
-    if(num === 12)
-    {
+  if (suffix === "AM") {
+    if (num === 12) {
       return 0;
-    }
-    else
-    {
+    } else {
       return num;
     }
-  }
-  else
-  {
-    if(num === 12)
-    {
-      return 12
-    }
-    else
-    {
+  } else {
+    if (num === 12) {
+      return 12;
+    } else {
       return num + 12;
     }
   }
-}
+};
 
-const dayToNum = (day) =>
-{
-  switch(day)
-  {
-    case 'Sunday':
-    {
+const dayToNum = (day) => {
+  switch (day) {
+    case "Sunday": {
       return 0;
     }
-    case 'Monday':
-    {
+    case "Monday": {
       return 1;
     }
-    case 'Tuesday':
-    {
-      return 2; 
-    }     
-    case 'Wednesday':
-    {
+    case "Tuesday": {
+      return 2;
+    }
+    case "Wednesday": {
       return 3;
     }
-    case 'Thursday':
-    {
+    case "Thursday": {
       return 4;
     }
-    case 'Friday':
-    {
-      return 5; 
-    }  
-    case 'Saturday':
-    {
+    case "Friday": {
+      return 5;
+    }
+    case "Saturday": {
       return 6;
     }
-    default:
-    {
+    default: {
       return null;
-    }                   
+    }
   }
-}
+};
 
 export default withStyles(styles)(InputForm2);
